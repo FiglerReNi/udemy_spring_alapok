@@ -6,28 +6,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BinarySearchSpring {
-    //VÁLTOZÓ ALAPÚ
-    /*
+
+    //ha több class tartozik egy interface-hez name alapján lehet behúzni (ha nem a @Primary annotációt használjuk)
+    private SortAlgorithm bubbleSortAlgorithm;
+
     @Autowired
-    private SortAlgorithm sortAlgorithm;
-    */
-    //KONSTRUKTOR ALAPÚ
-    /*
-    private SortAlgorithm sortAlgorithm;
-    @Autowired
-    public BinarySearchSpring(SortAlgorithm sortAlgorithm) {
-        this.sortAlgorithm = sortAlgorithm;
-    }
-    */
-    //SETTER ALAPÚ
-    private SortAlgorithm sortAlgorithm;
-    @Autowired
-    public void setSortAlgorithm(SortAlgorithm sortAlgorithm) {
-        this.sortAlgorithm = sortAlgorithm;
+    public void setSortAlgorithm(SortAlgorithm bubbleSortAlgorithm) {
+        this.bubbleSortAlgorithm = bubbleSortAlgorithm;
     }
 
     public int doBinarySearch(int[] numbers, int numberToSearchFor){
-        int[] sortedNumbers = sortAlgorithm.sort(numbers);
+        int[] sortedNumbers = bubbleSortAlgorithm.sort(numbers);
         return 3;
     }
 }
