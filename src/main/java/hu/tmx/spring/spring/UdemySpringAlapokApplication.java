@@ -1,5 +1,6 @@
 package hu.tmx.spring.spring;
 
+import hu.tmx.spring.component.repository.ComponentDAO;
 import hu.tmx.spring.spring.repository.PersonDAO;
 import hu.tmx.spring.spring.repository.PersonDAOInnerScope;
 import hu.tmx.spring.spring.repository.PersonDAOInnerScopeProxy;
@@ -7,10 +8,13 @@ import hu.tmx.spring.spring.repository.PersonDAOScope;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 import static hu.tmx.spring.spring.util.Logger.LOGGER;
 
 @SpringBootApplication
+//@ComponentScan("hu.tmx.spring")
+@ComponentScan({"hu.tmx.spring.spring", "hu.tmx.spring.component"})
 public class UdemySpringAlapokApplication {
 
     public static void main(String[] args) {
@@ -45,8 +49,12 @@ public class UdemySpringAlapokApplication {
 
         LOGGER.info("{}", personDAOInnerScopeProxy1);
         LOGGER.info("{}", personDAOInnerScopeProxy1.getJdbcConnectionProxy());
+        LOGGER.info("{}", personDAOInnerScopeProxy1.getJdbcConnectionProxy());
         LOGGER.info("{}", personDAOInnerScopeProxy2);
         LOGGER.info("{}", personDAOInnerScopeProxy2.getJdbcConnectionProxy());
+
+        ComponentDAO componentDAO = applicationContext.getBean(ComponentDAO.class);
+        LOGGER.info("{}", componentDAO);
     }
 
 }
