@@ -9,14 +9,13 @@ import static hu.tmx.spring.spring.util.Logger.LOGGER;
 
 @Configuration
 @ComponentScan
-public class UdemySpringAlapokApplication {
+public class UdemySpringAlapokApplicationTry {
 
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(UdemySpringAlapokApplication.class);
+       try(AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(UdemySpringAlapokApplicationTry.class)){
 
-        BinarySearchQualifier binarySearchQualifier = applicationContext.getBean(BinarySearchQualifier.class);
-        LOGGER.info("{}", binarySearchQualifier.doBinarySearch(new int[] {124,6}, 3));
-
-        applicationContext.close();
+           BinarySearchQualifier binarySearchQualifier = applicationContext.getBean(BinarySearchQualifier.class);
+           LOGGER.info("{}", binarySearchQualifier.doBinarySearch(new int[] {124,6}, 3));
+       }
     }
 }
