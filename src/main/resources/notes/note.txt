@@ -1,0 +1,172 @@
+Fogalmak:
+  Dependency:
+  	Függőség, egy osztályban használt másik osztály
+  Tightly coupled:
+  	Amikor a függőséget közvetlenül példányosítjuk az osztályon belül, amiben használjuk.
+  Loosly coupled:
+  	Amikor az eredeti osztályt példányosítjuk, akkor adjuk át neki például konstruktorban a függőség példányát.
+  	Az ilyen alalmazásokat könyebb tesztelni
+  	Ezt a Spring Framework automatikusan megcsinálja, példányosítja az eredeti osztályt és a függőséget, majd átadja az eredeti osztály konstruktorának vagy setterrel a függőség példányát.
+  	A Frameworknek meg kell mondanunk, melyik osztályokra figyeljen és csinálja ezt automatikusan. @Component, @Autowired
+  Dependency Injection:
+  	Inversion of Control megvalósítása, a Spring Framework alapja. Annotációk segítségével megcsinálja a példányosításokat és a függőségek kezelését.
+  Bean:
+  	Azoknak az osztályoknak a példányai, amiket a Spring Frameworknek kell kezelnie (példányosítás + függőségek)
+  Autowiring:
+  	A Spring framework függőség kezelése, megkeresi a függőség megfelelő osztályát, példányosítja és átadja az eredeti osztálynak.
+  Inversion of Control:
+  	Elméleti fogalom, a függőségek kezelésére. Ennek egy megvalósítása a dependency injection. A függőség kezelés átkerül a tartalmazó osztálytól a Framework-höz.
+  IOC Controller:
+  	Elméleti fogalom a beanek létrehozására és kezelésére, hogy hogyan kell történnie.
+  Application Context (Bean Factory++):
+  	Ebben történik a beanek létrehozása és kezelése, az IOC Controller egy implementációja. A Bean Factory-hez képest több feature van benne.
+  		AOP feature
+  		I18n
+  		WebApplicationContext
+  Bean Factory:
+  	Ebben történik a beanek létrehozása és kezelése, az IOC Controller egy másik implementációja.
+  	Ez az alap. A beanek kezelését, létrehozását, elpusztítását végzi teljeskörűen, de nincsenek extrái.
+  	Akkor érdemes ezt használni, ha kevés memóriával kell gazdálkodni.
+
+Autowiring:
+  	1. Interface-t adjuk meg az eredeti osztályban
+  		a. Ha csak egy implementációja van megtalálja a spring
+  		b. Ha több implementációja van
+  			i. @Primary a fölé az implementáció fölé, amelyiket használni akarjuk.
+  			ii. Az eredeti osztályban a függőségnek interface legyen a típusa, de a használni kívánt implementáció legyen a változó neve.
+            Ha ezt is használjuk és az @Primary-t is, az utóbbi az erősebb.
+  			iii. @Qualifier
+  	2. Autowiring típusai
+  		a. Változó alapú
+  		b. Konstruktor alapú
+  		c. Setter alapú
+
+Bean:
+  Scope
+  	Singleton – default
+  	Prototype - új beant hoz létre minden használatkor
+  	Request – http kérésenként egy új bean
+  	Session – http session - ként új egy bean
+  Scope + Autowiring
+  	Tartalmazó class és függősége is singleton
+  		-> egy példány keletkezik mindkettőből
+  	Tartlamazó class prototype és a függősége singleton
+  		-> a classból mindig új példány, de a függőségéből egy keletkezik
+  	Tartalmazó class singleton és a függősége prototype
+  		-> egy példány keletkezik mindkettőből, mert a tartalmazó osztály csak egyszer jön létre
+  		-> ha azt szeretnénk, hogy a függőségből mindig új példány keletkezzen, a @Scope annotáción belül definiálnunk kell proxiMode-ot hozzá
+  		-> utóbbi esetben akkor is új példány készül a függőségből, ha a már elkészült tartalmazó osztállyal újra használjuk a függőséget
+  Singleton pattern VS Spring singleton
+  	-> Singleton pattern: Egy példány/JVM
+  	-> Spring singleton: Egy példány/application context
+  PostConstruct
+  	Közvetlenül a bean keletkezésekor fut le egyszer, később a használatkor már nem.
+  PreDestroy
+  	Közvetlenül a bean elpusztulása előtt fut le egyszer (ez nem az utolsó használatot jelenti).
+  Annotációk
+  	Álstalános
+  		@Component - általános bean létrehozáshoz
+  	Specifikus
+  		○ Layereknek és MVC modellnek megfelelően
+  		○ A különböző annotációk szerint kategorizálhatjuk az osztályokat és kaphatnak funkcionalitást, plusz dolgokt az adott annotációval.
+  			@Repository
+  			@Controller
+  			@Service
+
+CDI:
+ Context and Dependency Injection:
+ 	A Springben használt IOC Container és Dependency Injection megfelelője a Java EE-ben.
+ 	Egy szabványt, leírást próbál adni ezekre, hogy hogyan kellene megvalósítani.
+ 	Fontosabb különbségek:
+ 		@Inject - @Autowired
+ 		@Named - @Component
+ 		@Singleton - @Scope singleton
+ 	Spring projektben egy dependency-vel tudjuk használni:
+ 		Javax.inject
+
+Spring vs Spring Boot:
+  Dependency különbség:
+  	Spring Boot dependency:
+  		Org.springframework.boot - Spring-boot starter
+  	Spring dependency:
+  		Org.springframework - Spring-core
+  		Org.springframework - Spring-context
+  Main:
+  	Annotáció különbség
+  		@SpringbootApplication – SpringBoot
+  		@Configuration, @ComponentScan – Spring
+  	ApplicationContext
+  		Springapplication.run – SpringBoot
+  		new AnnotationConfigApplicationContext – Spring
+  			-> Ezt mindig le kell zárni a main végén
+  				• .close() -al
+  				• újfajta try-al, ami az tudja, hogy megadhatom a try után a kódot zárójelben, és lezárja automatikusan, akkor is ha egyébként a try-on belüli kódban valami exception lesz. Olyan osztályoknál lehet használni, amik implementálják az AutoClosable interface-t
+  XML konfiguráció:
+  	• Springben az annotációk helyett ebben is definiálhatunk bean-eket és a függőségeiket.
+  		Ilyenkor nem kell a @ComponentScan és @Configuration annotáció.
+  	• A@ComponentScan annotációt helyettesíthetjük xml konfigurációval - ilyenkor a bean-ekhez az annotációkat használjuk és így találjuk meg őket.
+  		Ez egy vegyes módszer az xml és annotációval.
+  	• ApplicationContext.xml a resources-ba
+  	• Application context mainben:
+  		new ClassPathXmlApplicationContext(".xml")
+  	• Régebbi módszer, annotációkat használjuk
+
+Spring MVC vs Spring Boot:
+  	• Spring MVC-ben konfigurálni kell dolgokat, amiket a Spring Bootban nem.
+  	• Spring MVC-ben nekünk kell a dependencyket összeválogatni és figyelni a verziókra is, hogy mi mivel kompatibilis. Ezt a Spring Boot megcsinálja.
+  	• Spring MVC-ben kell Spring konfigurációs file (WEB-INF mappa)
+  		○ ebben definiáljuk a component scant
+  		○ internalizationt
+  		○ frontendhez kapcsolódó dolgokat pl thymeleaf, jsp
+  	• Spring MVC-ben kell web.xml (WEB-INF mappa)
+  		○ ebben konfigiráljuk a servletet a requestek kezeléséhez
+  		○ a Spring security dolgait
+  	• Az  alábbi Spring Boot dependency tartalmazza a Spring MVC-t, Spring Core-t, Validation és Logging framework-ot
+  		Org.springframework.boot - Spring-boot starter web
+  	• Az alábbi dependency-vel a jpa-t is megkapjuk és a konfigurációt nem kell megcsinálnunk, automatikus
+  		Org.springframework.boot - Spring-boot starter jpa
+  	• A Spring Boot-nak beépített Tomcat szervere van a .jar file-ban.
+  	• Spring Bootnál a RestController automatikusan json válasszal tér vissza
+  	• Spring Boot auto configuration
+
+Spring Boot Starters:
+  https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+  Az auto configuration segítségével nagyon sok mindent magától beállít.
+  Különböző startereket tudunk a dependency-k között használni, és amit így behúzunk és felkerül a classpath-ra, azt az auto configuration magától bekonfigurálja. Az egyes straterekbe ha belemegyünk, látjuk, hogy újabb dependencyket tartalmaznak, amiket az auto configuration mind bekonfigurál.
+  	• spring-boot-starter - ez az alap, tartalmazza a spring core-t. Tartalmaz logolást, validációt. Nem kell ezeket külön dependency-ként behúznunk, majd bekonfigurálnunk. Mindegyik starter erre épül, így ezt mind tartalmazza.
+  	• spring-boot-starter-web - ez webalkalmazásokhoz és rest apikhoz kell, tartalmazza a spring mvc-t, csak itt nem kell megcsinálnunk a konfigurációkat.
+  	• spring-boot-starter-test - unit teszthez és integration teszthez. Tartalmazza a mockito dependency-t is.
+  	• spring-boot-starter-data-jpa - tartalmazza a spring-jpa-t, spring data-t, spring orm-et, hybernate-t, jdbc-t stb.
+  	• spring-boot-starter-web-services - soap szervizekhez kell.
+  	• spring-boot-starter-jdbc - ha nem akarunk hybernatet használni.
+  	• spring-boot-starter-security - a Spring Securityt tartalmazza, alapból csinál a spring boot ezzel egy basic authentication-t.
+  	• spring-boot-starter-cache
+  	• spring-boot-starter-rest
+  	• spring-boot-starter-actuator - monitoring eszközök
+
+Spring Boot Actuator:
+  Dependency:
+  	• spring-boot-starter-actuator
+  	• spring-data-rest-hal-explorer
+  Application.properties:
+  	• management.endpoints.web.exposure.include=*
+  		> Így az összes actuator endpointra működik. Ilyet csak teszten csinálunk.
+  	} Az alkalmazás monitorozására alkalmas.
+  	} Például egy adott szerviz hányszor lett meghívva, hányszor nem sikerült meghívni stb.
+  	} Rest szervizeknél használják, a következő link segítségével jön elő: localhost:8080/actuator
+  	} Kiegészítője a hal-explorer, ami a gyökér könyvtár meghívásával jön elő: localhost:8080. Ez a postman funkcióit is tudja.
+
+Konfigurációs file:
+  Helye és érték beolvasás:
+  	• Resources/application.properties
+  		Automatikusan megtalálja a Spring az ilyen nevű file-t, nemcsak itt, hanem az src mellett is
+  	• Resources/saját file
+  		Main-ben: @PropertySource -> classpath
+  	• Projekt melletti file (src mellett pl.)
+  		Main-ben: @PropertySource -> file
+
+Eszközök:
+  CommandLineRunner:
+  A main-t tartalmazó osztálynál kell implementálni, majd felülírni a kötelező metódusát. Ez egy interface, azt tudja, hogy minden előtt lefut, miután elkészült az application context.
+
+
